@@ -77,9 +77,13 @@
         </button>
     </div>
 
-    <!-- Conteneur qui sera transformé en image par HTML2CANVAS ! -->
-    <div id="fiche-export-safe">
-        <div class="cahier-paper" id="fiche"></div>
+    <div class="cahier-paper">
+        <div class="hole" style="top: 80px;"></div>
+        <div class="hole" style="top: 280px;"></div>
+        <div class="hole" style="top: 480px;"></div>
+        <div class="hole" style="top: 680px;"></div>
+
+        <div id="fiche" class="relative z-20 transition-all duration-300"></div>
     </div>
 
     <script>
@@ -144,7 +148,7 @@
                         </div>
                     </div>
                 `,
-                points: ["Les données sont connectées entre elles, d'où le terme <strong>"relationnelles"</strong>."]
+                points: ["Les données sont connectées entre elles, d'où le terme <strong>'relationnelles'</strong>."]
             },
             {
                 id: "2",
