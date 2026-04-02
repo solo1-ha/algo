@@ -1,0 +1,951 @@
+[02/04/2026 11:50] Micheal:
+<!DOCTYPE html>
+<html lang="fr">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;800&family=Fira+Code&display=swap"
+        rel="stylesheet">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
+    <style>
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: #1a1a1a;
+            padding: 20px;
+            color: #333;
+        }
+
+        .code-font {
+            font-family: 'Fira Code', monospace;
+        }
+
+        .cahier-paper {
+            width: 400px;
+            min-height: 720px;
+            background-color: #fff;
+            position: relative;
+            box-shadow: 10px 10px 25px rgba(0, 0, 0, 0.3);
+            border-radius: 8px;
+            overflow: hidden;
+            background-image:
+                linear-gradient(45deg, rgba(0, 0, 0, 0.01) 25%, transparent 25%),
+                linear-gradient(-45deg, rgba(0, 0, 0, 0.01) 25%, transparent 25%),
+                linear-gradient(white, white 98%, #eaeaea 98%, #eaeaea);
+            background-size: 20px 20px, 20px 20px, 100% 25px;
+            background-position: 0 0, 0 10px, 0 -2px;
+        }
+
+        .cahier-paper::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 50px;
+            width: 1.5px;
+            height: 100%;
+            background-color: #fca5a5;
+            z-index: 10;
+        }
+
+        .hole {
+            position: absolute;
+            left: 12px;
+            width: 18px;
+            height: 18px;
+            background-color: #1a1a1a;
+            border-radius: 50%;
+            border: 2px solid #eaeaea;
+            z-index: 11;
+        }
+    </style>
+</head>
+
+<body class="flex flex-col items-center justify-center min-h-screen">
+
+    <div class="mb-6 flex gap-4">
+        <button onclick="prevPage()" class="bg-white/10 text-white px-4 py-2 rounded-lg hover:bg-white/20 transition">←
+            Précédent</button>
+        <span id="pageCounter" class="text-white font-bold self-center">Page 1 / 10</span>
+        <button onclick="nextPage()"
+            class="bg-white/10 text-white px-4 py-2 rounded-lg hover:bg-white/20 transition">Suivant →</button>
+    </div>
+
+    <div class="cahier-paper">
+        <div class="hole" style="top: 80px;"></div>
+        <div class="hole" style="top: 280px;"></div>
+        <div class="hole" style="top: 480px;"></div>
+        <div class="hole" style="top: 680px;"></div>
+
+        <div id="fiche" class="relative z-20 transition-all duration-300"></div>
+    </div>
+    <script>
+        let currentPage = 0;
+
+        const pagesData = [
+            { 
+                id: "Cover", 
+                color: "border-gray-800", 
+                title: "ALGORITIME", 
+                subtitle: "LE GUIDE COMPLET DE L'ALGORITHMIQUE 🚀", 
+                content: `
+                    <div class="space-y-6 text-[13px] text-gray-700 leading-snug flex flex-col items-center justify-center h-full text-center">
+                        <div class="mt-8">
+                            <p class="text-lg font-bold text-gray-800 mb-2">Bienvenue dans votre</p>
+                            <h2 class="text-[26px] font-black text-transparent bg-clip-text bg-gradient-to-r from-red-500 to-purple-600 mb-3 tracking-tighter leading-tight">CAHIER D'ALGORITHMIQUE</h2>
+                            <p class="mb-4 text-gray-600 px-4">Ce recueil de fiches interactives vous guidera étape par étape pour comprendre la logique fondamentale derrière tous les langages de programmation.</p>
+                        </div>
+                        <div class="border-t border-b border-dotted border-gray-300 py-4 px-2 w-full mt-4">
+                            <h3 class="text-sm font-bold text-gray-800 mb-3 uppercase">Au programme :</h3>
+                            <ul class="text-xs text-left grid grid-cols-2 gap-3 text-gray-600">
+                                <li><span class="text-red-500 font-bold">✓</span> L'algorithmique</li>
+                                <li><span class="text-blue-500 font-bold">✓</span> Structure & Variables</li>
+                                <li><span class="text-yellow-500 font-bold">✓</span> Conditions (SI, SELON)</li>
+                                <li><span class="text-pink-500 font-bold">✓</span> Boucles (TANT QUE, POUR)</li>
+                                <li class="col-span-2 text-center"><span class="text-emerald-500 font-bold">✓</span> Tableaux & Sous-programmes</li>
+                            </ul>
+                        </div>
+                        <div class="mt-6">
+                            <button onclick="generateTruePDF()" class="bg-gray-800 text-white px-5 py-2.5 rounded-full font-bold shadow-md hover:bg-gray-700 transition flex items-center justify-center gap-2 mx-auto cursor-pointer">
+                                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 10v6m0 0l-3-3m3 3l3-3m2 8H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path></svg>
+                                Télécharger en PDF
+                            </button>
+                            <p class="text-[10px] text-gray-400 mt-2">Génère un livre PDF de qualité certifiée 📚</p>
+                        </div>
+                    </div>
+                `,
+                points: [
+                    "<strong>L'algorithmique</strong> est la base absolue de TOUT programme.",
+                    "Prenez le temps de bien comprendre la logique de chaque fiche !"
+                ] 
+            },
+            { 
+                id: "1/10", 
+                color: "border-red-500", 
+                title: "C'EST QUOI UN ALGORITHME ?", 
+                subtitle: "La base de toute programmation 🧠", 
+                content: `
+                    <div class="space-y-4 text-[13px] text-gray-700 leading-snug">
+                        <div>
+                            <h2 class="text-red-500 font-bold mb-1 border-b border-dotted border-gray-300 pb-1 flex items-center gap-1"><span class="rotate-45 block">✈</span> Définition</h2>
+                            <ul class="space-y-1">
+                                <li><span class="text-red-500 font-bold">→</span>Suite d'<strong>instructions précises et ordonnées</strong> pour résoudre un problème</li>
+                                <li><span class="text-red-500 font-bold">→</span>Doit être <strong>fini</strong> (se termine toujours)</li>
+                                <li><span class="text-red-500 font-bold">→</span>Doit être <strong>non ambigu</strong> (chaque étape est claire)</li>
+                                <li><span class="text-red-500 font-bold">→</span>Indépendant de tout langage de programmation</li>
+                            </ul>
+                        </div>
+                        <div>
+                            <h2 class="text-red-500 font-bold mb-1 border-b border-dotted border-gray-300 pb-1 flex items-center gap-1"><span class="rotate-45 block">✈</span> Analogie du quotidien</h2>
+                            <p class="mb-1"><span class="text-red-500 font-bold">✓</span> Une <strong>recette de cuisine</strong> est un algorithme !</p>
+                            <div class="border rounded p-2 code-font text-[11px] leading-tight">
+                                <p class="text-blue-800 font-bold">ALGORITHME FaireDuCafé</p>
+                                <p class="text-blue-800 font-bold">DÉBUT</p>
+                                <ol class="list-decimal list-outside pl-6 text-gray-600 space-y-0.5 my-1">
+                                    <li>Mettre de l'eau dans la cafetière</li>
+                                    <li>Ajouter le café moulu</li>
+                                    <li>Allumer la cafetière</li>
+                                    <li>Attendre que le café soit prêt</li>
+                                    <li>Verser dans une tasse</li>
+                                </ol>
+                                <p class="text-blue-800 font-bold">FIN</p>
+                            </div>
+                        </div>
+                        <div>
+                            <h2 class="text-red-500 font-bold mb-1 border-b border-dotted border-gray-300 pb-1 flex items-center gap-1"><span class="rotate-45 block">✈</span> Les 3 propriétés essentielles</h2>
+                            <table class="w-full text-[11px] border-collapse">
+                                <thead>
+                                    <tr class="border-b"><th class="text-left py-1 w-1/3">Propriété</th><th class="text-left py-1">Signification</th></tr>
+                                </thead>
+                                <tbody>
+                                    <tr class="border-b border-dotted"><td class="py-1 font-bold">Finitude</td><td class="py-1">Se termine en un nombre fini d'étapes</td></tr>
+                                    <tr class="border-b border-dotted"><td class="py-1 font-bold">Précision</td><td class="py-1">Chaque étape est clairement définie</td></tr>
+                                    <tr class="border-b border-dotted"><td class="py-1 font-bold">Efficacité</td><td class="py-1">Produit le résultat attendu</td></tr>
+                                </tbody>
+                            </table>
+                        </div>
+                        <div>
+                            <h2 class="text-red-500 font-bold mb-1 border-b border-dotted border-gray-300 pb-1 flex items-center gap-1"><span class="rotate-45 block">✈</span> Du problème à l'algorithme</h2>
+                            <ul class="space-y-1">
+                                <li><span class="text-red-500 font-bold">①</span> <strong>Analyser</strong> le problème</li>
+                                <li><span class="text-red-500 font-bold">②</span> <strong>Identifier</strong> les données d'entrée et de sortie</li>
+                                <li><span class="text-red-500 font-bold">③</span> <strong>Décomposer</strong> en étapes simples</li>
+                                <li><span class="text-red-500 font-bold">④</span> <strong>Écrire</strong> l'algorithme en pseudo-code</li>
+                                <li><span class="text-red-500 font-bold">⑤</span> <strong>Tester</strong> avec des exemples</li>
+                            </ul>
+                        </div>
+                    </div>
+                `,
+                points: [
+                    "Un algorithme est <strong>indépendant</strong> du langage (C, Python, VB...)",
+                    "On écrit d'abord l'algo, <strong>ensuite</strong> on code",
+                    "Un bon algo = programme <strong>correct</strong> + <strong>rapide</strong> + <strong>lisible</strong>"
+                ] 
+            },
+            { 
+                id: "2/10", 
+                color: "border-blue-500", 
+                title: "STRUCTURE D'UN ALGORITHME", 
+                subtitle: "L'anatomie complète d'un algorithme 📋", 
+                content: `
+                    <div class="space-y-4 text-[13px] text-gray-700 leading-snug">
+                        <div>
+                            <h2 class="text-blue-500 font-bold mb-1 border-b border-dotted border-gray-300 pb-1 flex items-center gap-1"><span class="rotate-45 block">✈</span> Structure générale</h2>
+                            <div class="border rounded p-2 code-font text-[11px] leading-tight border-l-4 border-l-blue-500">
+                                <p class="text-blue-800 font-bold mb-2">ALGORITHME NomAlgorithme</p>
+                                
+                                <p class="text-gray-400 italic">{ Section des constantes }</p>
+                                <p class="text-blue-800 font-bold">CONSTANTES</p>
+                                <p class="pl-4">PI <span class="text-gray-500">←</span> 3.14159</p>
+                                
+                                <p class="text-gray-400 italic mt-2">{ Section des variables }</p>
+                                <p class="text-blue-800 font-bold">VARIABLES</p>
+                                <p class="pl-4 text-red-500 flex"><span class="w-12">age</span> <span class="text-gray-500 mx-2">:</span> <span class="text-green-600 font-bold">Entier</span></p>
+                                <p class="pl-4 text-red-500 flex"><span class="w-12">nom</span> <span class="text-gray-500 mx-2">:</span> <span class="text-green-600 font-bold">Chaîne</span></p>
+                                <p class="pl-4 text-red-500 flex"><span class="w-12">prix</span> <span class="text-gray-500 mx-2">:</span> <span class="text-green-600 font-bold">Réel</span></p>
+                                
+                                <p class="text-gray-400 italic mt-2">{ Corps de l'algorithme }</p>
+                                <p class="text-blue-800 font-bold">DÉBUT</p>
+                                <p class="pl-4 text-gray-400 italic">{ Instructions ici }</p>
+                                <p class="text-blue-800 font-bold mt-1">FIN</p>
+                            </div>
+                        </div>
+                        <div>
+                            <h2 class="text-blue-500 font-bold mb-1 border-b border-dotted border-gray-300 pb-1 flex items-center gap-1"><span class="rotate-45 block">✈</span> Les 4 sections</h2>
+                            <table class="w-full text-[11px] border-collapse">
+                                <thead>
+                                    <tr class="border-b"><th class="text-left py-1 w-1/4">Section</th><th class="text-left py-1">Rôle</th><th class="text-center py-1">Obligatoire</th></tr>
+                                </thead>
+                                <tbody>
+                                    <tr class="border-b border-dotted"><td class="py-1 font-bold uppercase">Nom</td><td class="py-1">Identifie l'algorithme</td><td class="text-center">✔️ Oui</td></tr>
+                                    <tr class="border-b border-dotted"><td class="py-1 font-bold uppercase">Constantes</td><td class="py-1">Valeurs fixes</td><td class="text-center font-bold">✖ Non</td></tr>
+                                    <tr class="border-b border-dotted"><td class="py-1 font-bold uppercase">Variables</td><td class="py-1">Données manipulées</td><td class="text-center text-gray-500">✔️ Souvent</td></tr>
+                                    <tr class="border-b border-dotted"><td class="py-1 font-bold uppercase">Début...Fin</td><td class="py-1">Corps des instructions</td><td class="text-center">✔️ Oui</td></tr>
+                                </tbody>
+                            </table>
+                        </div>
+                        <div>
+                            <h2 class="text-blue-500 font-bold mb-1 border-b border-dotted border-gray-300 pb-1 flex items-center gap-1"><span class="rotate-45 block">✈</span> Exemple complet</h2>
+                            <div class="border rounded p-2 code-font text-[11px] leading-tight border-l-4 border-l-blue-500">
+                                <p class="text-blue-800 font-bold">ALGORITHME AireRectangle</p>
+                                <p class="text-blue-800 font-bold">VARIABLES</p>
+                                <p class="pl-4 text-red-500">longueur, largeur, aire : <span class="text-green-600 font-bold">Réel</span></p>
+                                <p class="text-blue-800 font-bold mt-1">DÉBUT</p>
+                                <p class="pl-4 text-purple-600">Écrire<span class="text-gray-500">("Longueur : ")</span></p>
+                                <p class="pl-4 text-purple-600">Lire<span class="text-gray-500">(longueur)</span></p>
+                                <p class="pl-4 text-purple-600">Écrire<span class="text-gray-500">("Largeur : ")</span></p>
+                                <p class="pl-4 text-purple-600">Lire<span class="text-gray-500">(largeur)</span></p>
+                                <p class="pl-4 text-red-500">aire <span class="text-gray-500">←</span> longueur * largeur</p>
+                                <p class="pl-4 text-purple-600">Écrire<span class="text-gray-500">("Aire = ", aire)</span></p>
+                                <p class="text-blue-800 font-bold mt-1">FIN</p>
+                            </div>
+                        </div>
+                    </div>
+                `,
+                points: [
+                    "L'ordre est strict : <strong>Nom → Variables → Début...Fin</strong>",
+                    "Les commentaires s'écrivent entre <strong>{ }</strong>",
+                    "<strong>←</strong> est le symbole d'affectation en algorithmique"
+                ] 
+            },
+            { 
+                id: "3/10", 
+                color: "border-green-600", 
+                title: "VARIABLES & DÉCLARATION", 
+                subtitle: "Stocker des données en mémoire 📦", 
+                content: `
+                    <div class="space-y-4 text-[13px] text-gray-700 leading-snug">
+                        <div>
+                            <h2 class="text-green-600 font-bold mb-1 border-b border-dotted border-gray-300 pb-1 flex items-center gap-1"><span class="rotate-45 block">✈</span> Qu'est-ce qu'une variable ?</h2>
+                            <ul class="space-y-1">
+                                <li><span class="text-green-600 font-bold">→</span>Une <strong>case mémoire</strong> qui stocke une valeur</li>
+                                <li><span class="text-green-600 font-bold">→</span>Elle a un <strong>nom</strong>, un <strong>type</strong> et une <strong>valeur</strong></li>
+                                <li><span class="text-green-600 font-bold">→</span>Sa valeur peut <strong>changer</strong> pendant l'exécution</li>
+                            </ul>
+                        </div>
+                        <div>
+                            <h2 class="text-green-600 font-bold mb-1 border-b border-dotted border-gray-300 pb-1 flex items-center gap-1"><span class="rotate-45 block">✈</span> Déclarer des variables</h2>
+                            <div class="border rounded p-2 code-font text-[11px] leading-tight border-l-4 border-l-green-600">
+                                <p class="text-blue-800 font-bold">VARIABLES</p>
+                                <p class="pl-4 text-gray-400 italic mb-1">{ nom : Type }</p>
+                                <p class="pl-4 text-red-500 flex"><span class="w-16">age</span> <span class="text-black">:</span> <span class="text-green-600 font-bold ml-2">Entier</span></p>
+                                <p class="pl-4 text-red-500 flex"><span class="w-16">prix</span> <span class="text-black">:</span> <span class="text-green-600 font-bold ml-2">Réel</span></p>
+                                <p class="pl-4 text-red-500 flex"><span class="w-16">nom</span> <span class="text-black">:</span> <span class="text-green-600 font-bold ml-2">Chaîne</span></p>
+                                <p class="pl-4 text-red-500 flex"><span class="w-16">valide</span> <span class="text-black">:</span> <span class="text-green-600 font-bold ml-2">Booléen</span></p>
+                                <p class="pl-4 text-red-500 flex"><span class="w-16">lettre</span> <span class="text-black">:</span> <span class="text-green-600 font-bold ml-2">Caractère</span></p>
+                                <p class="pl-4 text-gray-400 italic mt-2 mb-1">{ Plusieurs du même type }</p>
+                                <p class="pl-4 text-red-500 flex"><span class="w-16">x, y, z</span> <span class="text-black">:</span> <span class="text-green-600 font-bold ml-2">Entier</span></p>
+                            </div>
+                        </div>
+                        <div>
+                            <h2 class="text-green-600 font-bold mb-1 border-b border-dotted border-gray-300 pb-1 flex items-center gap-1"><span class="rotate-45 block">✈</span> Affecter une valeur</h2>
+                            <div class="border rounded p-2 code-font text-[11px] leading-tight border-l-4 border-l-green-600">
+                                <p class="text-blue-800 font-bold">DÉBUT</p>
+                                <p class="pl-4 text-gray-400 italic mb-1">{ ← est l'opérateur d'affectation }</p>
+                                <p class="pl-4 text-red-500 flex"><span class="w-16">age</span> <span class="text-gray-500">← 20</span></p>
+                                <p class="pl-4 text-red-500 flex"><span class="w-16">prix</span> <span class="text-gray-500">← 19.99</span></p>
+                                <p class="pl-4 text-red-500 flex"><span class="w-16">nom</span> <span class="text-gray-500">← "Alice"</span></p>
+                                <p class="pl-4 text-red-500 flex"><span class="w-16">valide</span> <span class="text-gray-500">←</span> <span class="text-gray-800 font-bold ml-1">VRAI</span></p>
+                                <p class="pl-4 text-gray-400 italic mt-2 mb-1">{ Calcul dans affectation }</p>
+                                <p class="pl-4 text-red-500 flex"><span class="w-16">z</span> <span class="text-gray-500">← x + y</span></p>
+                                <p class="text-blue-800 font-bold mt-1">FIN</p>
+                            </div>
+                        </div>
+                        <div>
+                            <h2 class="text-green-600 font-bold mb-1 border-b border-dotted border-gray-300 pb-1 flex items-center gap-1"><span class="rotate-45 block">✈</span> Constantes vs Variables</h2>
+                            <table class="w-full text-[11px] border-collapse">
+                                <thead>
+                                    <tr class="border-b"><th class="text-left py-1 w-1/5"></th><th class="text-left py-1 w-2/5">Variable</th><th class="text-left py-1 w-2/5">Constante</th></tr>
+                                </thead>
+                                <tbody>
+                                    <tr class="border-b border-dotted"><td class="py-1 text-gray-500">Valeur</td><td class="py-1 font-bold">Peut changer</td><td class="py-1 font-bold">Fixe</td></tr>
+                                    <tr class="border-b border-dotted"><td class="py-1 text-gray-500">Déclaration</td><td class="py-1 font-bold">VARIABLES</td><td class="py-1 font-bold">CONSTANTES</td></tr>
+                                    <tr class="border-b border-dotted"><td class="py-1 text-gray-500">Affectation</td><td class="py-1">age ← 20</td><td class="py-1">PI ← 3.14</td></tr>
+                                    <tr class="border-b border-dotted"><td class="py-1 text-gray-500">Exemple</td><td class="py-1">compteur, total</td><td class="py-1">TVA, PI, MAX</td></tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                `,
+                points: [
+                    "<strong>←</strong> = affectation | <strong>=</strong> = comparaison en algo",
+                    "Nom de variable : commence par une lettre, <strong>pas d'espace</strong>",
+                    "Constantes en <strong>MAJUSCULES</strong> par convention",
+                    "<strong>Toujours déclarer avant le DÉBUT</strong>"
+                ] 
+            },
+            { 
+                id: "4/10", 
+                color: "border-purple-600", 
+                title: "LES OPÉRATEURS ET LECTURE/ÉCRITURE", 
+                subtitle: "Interagir et calculer 🧮", 
+                content: `
+                    <div class="space-y-4 text-[13px] text-gray-700 leading-snug">
+                        <div>
+                            <h2 class="text-purple-600 font-bold mb-1 border-b border-dotted border-gray-300 pb-1 flex items-center gap-1"><span class="rotate-45 block">✈</span> Les Opérateurs</h2>
+                            <table class="w-full text-[11px] border-collapse">
+                                <thead>
+                                    <tr class="border-b"><th class="text-left py-1 w-1/4">Type</th><th class="text-left py-1">Opérateurs</th><th class="text-left py-1">Exemple</th></tr>
+                                </thead>
+                                <tbody>
+                                    <tr class="border-b border-dotted"><td class="py-1 font-bold">Arithmétiques</td><td class="py-1">+   -   *   /   DIV   MOD</td><td class="py-1">7 DIV 2 = 3, 7 MOD 2 = 1</td></tr>
+                                    <tr class="border-b border-dotted"><td class="py-1 font-bold">Relationnels</td><td class="py-1">=   ≠   <   >   ≤   ≥</td><td class="py-1">age ≥ 18</td></tr>
+                                    <tr class="border-b border-dotted"><td class="py-1 font-bold">Logiques</td><td class="py-1">NON   ET   OU</td><td class="py-1">(age ≥ 18) ET (passeport = VRAI)</td></tr>
+                                </tbody>
+                            </table>
+                        </div>
+                        <div>
+                            <h2 class="text-purple-600 font-bold mb-1 border-b border-dotted border-gray-300 pb-1 flex items-center gap-1"><span class="rotate-45 block">✈</span> Lecture (Entrée)</h2>
+                            <ul class="space-y-1">
+                                <li><span class="text-purple-600 font-bold">→</span>L'instruction <strong>Lire</strong> permet de récupérer une valeur saisie par l'utilisateur.</li>
+                            </ul>
+                            <div class="border rounded p-2 code-font text-[11px] leading-tight border-l-4 border-l-purple-600 mt-2">
+                                <p class="pl-4 text-purple-700">Lire<span class="text-gray-500">(nom)</span> <span class="text-gray-400 italic text-[10px]"> { Le programme attend la saisie }</span></p>
+                            </div>
+                        </div>
+                        <div>
+                            <h2 class="text-purple-600 font-bold mb-1 border-b border-dotted border-gray-300 pb-1 flex items-center gap-1"><span class="rotate-45 block">✈</span> Écriture (Sortie)</h2>
+                            <ul class="space-y-1">
+                                <li><span class="text-purple-600 font-bold">→</span>L'instruction <strong>Écrire</strong> affiche du texte ou le contenu d'une variable à l'écran.</li>
+                            </ul>
+                            <div class="border rounded p-2 code-font text-[11px] leading-tight border-l-4 border-l-purple-600 mt-2">
+                                <p class="pl-4 text-purple-700">Écrire<span class="text-gray-500">("Bonjour tout le monde !")</span></p>
+                                <p class="pl-4 text-purple-700 mt-1">Écrire<span class="text-gray-500">("Votre nom est : ", nom)</span></p>
+                            </div>
+                        </div>
+                    </div>
+                `,
+                points: [
+                    "<strong>DIV</strong> : division entière (sans virgule) | <strong>MOD</strong> : reste de la division",
+                    "On sépare texte et variables par une <strong>virgule</strong> dans Écrire()"
+                ] 
+            },
+            { 
+                id: "5/10", 
+                color: "border-yellow-500", 
+                title: "LA CONDITION SIMPLE (SI)", 
+                subtitle: "Prendre des décisions 🛤", 
+                content: `
+                    <div class="space-y-4 text-[13px] text-gray-700 leading-snug">
+                        <div>
+                            <h2 class="text-yellow-600 font-bold mb-1 border-b border-dotted border-gray-300 pb-1 flex items-center gap-1"><span class="rotate-45 block">✈</span> Structure SI ... ALORS</h2>
+                            <p class="mb-1 text-sm">Permet d'exécuter des instructions <strong>uniquement</strong> si une condition est VRAIE.</p>
+                            <div class="border rounded p-2 code-font text-[11px] leading-tight border-l-4 border-l-yellow-500 mb-2">
+                                <p class="text-blue-800 font-bold">SI <span class="text-red-500">condition</span> ALORS</p>
+                                <p class="pl-4 text-gray-500 italic">Instructions à exécuter si vrai</p>
+                                <p class="text-blue-800 font-bold">FIN SI</p>
+                            </div>
+                        </div>
+                        <div>
+                            <h2 class="text-yellow-600 font-bold mb-1 border-b border-dotted border-gray-300 pb-1 flex items-center gap-1"><span class="rotate-45 block">✈</span> Structure SI ... ALORS ... SINON</h2>
+                            <p class="mb-1 text-sm">Donne une alternative si la condition est FAUSSE.</p>
+                            <div class="border rounded p-2 code-font text-[11px] leading-tight border-l-4 border-l-yellow-500 mb-2">
+                                <p class="text-blue-800 font-bold">SI <span class="text-red-500">condition</span> ALORS</p>
+                                <p class="pl-4 text-gray-500 italic">Instructions si VRAI</p>
+                                <p class="text-blue-800 font-bold">SINON</p>
+                                <p class="pl-4 text-gray-500 italic">Instructions si FAUX</p>
+                                <p class="text-blue-800 font-bold">FIN SI</p>
+                            </div>
+                        </div>
+                        <div>
+                            <h2 class="text-yellow-600 font-bold mb-1 border-b border-dotted border-gray-300 pb-1 flex items-center gap-1"><span class="rotate-45 block">✈</span> Exemple concret</h2>
+                            <div class="border rounded p-2 code-font text-[11px] leading-tight border-l-4 border-l-yellow-500">
+                                <p class="text-blue-800 font-bold">SI <span class="text-red-500">age >= 18</span> ALORS</p>
+                                <p class="pl-4 text-purple-700">Écrire<span class="text-gray-500">("Vous êtes majeur.")</span></p>
+                                <p class="text-blue-800 font-bold">SINON</p>
+                                <p class="pl-4 text-purple-700">Écrire<span class="text-gray-500">("Vous êtes mineur.")</span></p>
+                                <p class="text-blue-800 font-bold">FIN SI</p>
+                            </div>
+                        </div>
+                    </div>
+                `,
+                points: [
+                    "La condition doit toujours renvoyer un résultat <strong>VRAI ou FAUX</strong>.",
+                    "On peut imbriquer des SI à l'intérieur d'autres SI."
+                ] 
+            },
+            { 
+                id: "6/10", 
+                color: "border-cyan-500", 
+                title: "LE CHOIX MULTIPLE (SELON)", 
+                subtitle: "Éviter les SI imbriqués infinis 🔀", 
+                content: `
+                    <div class="space-y-4 text-[13px] text-gray-700 leading-snug">
+                        <div>
+                            <h2 class="text-cyan-600 font-bold mb-1 border-b border-dotted border-gray-300 pb-1 flex items-center gap-1"><span class="rotate-45 block">✈</span> C'est quoi ?</h2>
+                            <p class="mb-1 text-sm">Quand une variable peut prendre beaucoup de valeurs spécifiques, utiliser une cascade de <code>SI</code> est lourd. C'est là qu'intervient <strong>SELON</strong>.</p>
+                        </div>
+                        <div>
+                            <h2 class="text-cyan-600 font-bold mb-1 border-b border-dotted border-gray-300 pb-1 flex items-center gap-1"><span class="rotate-45 block">✈</span> Structure</h2>
+                            <div class="border rounded p-2 code-font text-[11px] leading-tight border-l-4 border-l-cyan-500 mb-2">
+                                <p class="text-blue-800 font-bold">SELON <span class="text-red-500">variable</span> FAIRE</p>
+                                <p class="pl-4"><span class="font-bold">valeur1 :</span> instructions pour valeur1</p>
+                                <p class="pl-4"><span class="font-bold">valeur2 :</span> instructions pour valeur2</p>
+                                <p class="pl-4"><span class="font-bold">valeur3, valeur4 :</span> instructions pour 3 et 4</p>
+                                <p class="text-blue-800 font-bold mt-1">AUTREMENT</p>
+                                <p class="pl-4 italic text-gray-500">Instructions si aucune valeur ne correspond</p>
+                                <p class="text-blue-800 font-bold">FIN SELON</p>
+                            </div>
+                        </div>
+                        <div>
+                            <h2 class="text-cyan-600 font-bold mb-1 border-b border-dotted border-gray-300 pb-1 flex items-center gap-1"><span class="rotate-45 block">✈</span> Exemple : Jours de la semaine</h2>
+                            <div class="border rounded p-2 code-font text-[11px] leading-tight border-l-4 border-l-cyan-500">
+                                <p class="text-blue-800 font-bold">SELON <span class="text-red-500">jour</span> FAIRE</p>
+                                <p class="pl-4 text-purple-700"><span class="text-black font-bold">1 :</span> Écrire<span class="text-gray-500">("Lundi")</span></p>
+                                <p class="pl-4 text-purple-700"><span class="text-black font-bold">2 :</span> Écrire<span class="text-gray-500">("Mardi")</span></p>
+                                <p class="pl-4 text-purple-700"><span class="text-black font-bold">6, 7 :</span> Écrire<span class="text-gray-500">("Week-end")</span></p>
+                                <p class="text-blue-800 font-bold mt-1">AUTREMENT</p>
+                                <p class="pl-4 text-purple-700">Écrire<span class="text-gray-500">("Erreur, jour invalide")</span></p>
+                                <p class="text-blue-800 font-bold">FIN SELON</p>
+                            </div>
+                        </div>
+                    </div>
+                `,
+                points: [
+                    "Idéal pour les menus d'application (Tapez 1 pour Jouer, 2 pour Quitter).",
+                    "Rend le code beaucoup plus <strong>lisible</strong> que de multiples SI imbriqués."
+                ] 
+            },
+            { 
+                id: "7/10", 
+                color: "border-pink-500", 
+                title: "LA BOUCLE TANT QUE (WHILE)", 
+                subtitle: "Répéter sous condition 🔄", 
+                content: `
+                    <div class="space-y-4 text-[13px] text-gray-700 leading-snug">
+                        <div>
+                            <h2 class="text-pink-600 font-bold mb-1 border-b border-dotted border-gray-300 pb-1 flex items-center gap-1"><span class="rotate-45 block">✈</span> Pourquoi une boucle ?</h2>
+                            <p class="mb-1 text-sm">Pour répéter une ou plusieurs instructions sans avoir à les réécrire.</p>
+                        </div>
+                        <div>
+                            <h2 class="text-pink-600 font-bold mb-1 border-b border-dotted border-gray-300 pb-1 flex items-center gap-1"><span class="rotate-45 block">✈</span> Structure TANT QUE</h2>
+                            <p class="mb-1 text-sm text-gray-600">On l'utilise quand <strong>on ne sait pas à l'avance</strong> combien de fois on va devoir répéter (Ex: redemander un mot de passe).</p>
+                            <div class="border rounded p-2 code-font text-[11px] leading-tight border-l-4 border-l-pink-500 mb-2">
+                                <p class="text-blue-800 font-bold">TANT QUE <span class="text-red-500">condition</span> FAIRE</p>
+                                <p class="pl-4 text-gray-500 italic">Instructions à répéter</p>
+                                <p class="text-blue-800 font-bold">FIN TANT QUE</p>
+                            </div>
+                        </div>
+                        <div>
+                            <h2 class="text-pink-600 font-bold mb-1 border-b border-dotted border-gray-300 pb-1 flex items-center gap-1"><span class="rotate-45 block">✈</span> Exemple : Saisie contrôlée</h2>
+                            <div class="border rounded p-2 code-font text-[11px] leading-tight border-l-4 border-l-pink-500">
+                                <p class="pl-4 text-red-500">mot_passe <span class="text-gray-500">← ""</span></p>
+                                <p class="text-blue-800 font-bold mt-1">TANT QUE <span class="text-red-500">mot_passe ≠ "SECRET"</span> FAIRE</p>
+                                <p class="pl-4 text-purple-700">Écrire<span class="text-gray-500">("Donnez le mot de passe :")</span></p>
+                                <p class="pl-4 text-purple-700">Lire<span class="text-gray-500">(mot_passe)</span></p>
+                                <p class="text-blue-800 font-bold">FIN TANT QUE</p>
+                                <p class="pl-4 mt-1 text-purple-700">Écrire<span class="text-gray-500">("Accès accordé !")</span></p>
+                            </div>
+                        </div>
+                    </div>
+                `,
+                points: [
+                    "Le test est fait <strong>avant</strong> l'entrée de la boucle. Si la condition est FAUSSE dès le départ, la boucle n'est jamais exécutée.",
+                    "Il FAUT que la condition puisse devenir FAUSSE à un moment ! (sinon <strong>boucle infinie</strong>)"
+                ] 
+            },
+            { 
+                id: "8/10", 
+                color: "border-orange-500", 
+                title: "LA BOUCLE POUR (FOR)", 
+                subtitle: "Répéter un nombre de fois précis 🔢", 
+                content: `
+                    <div class="space-y-4 text-[13px] text-gray-700 leading-snug">
+                        <div>
+                            <h2 class="text-orange-600 font-bold mb-1 border-b border-dotted border-gray-300 pb-1 flex items-center gap-1"><span class="rotate-45 block">✈</span> C'est quoi ?</h2>
+                            <p class="mb-1 text-sm">On l'utilise quand <strong>on connaît exactement</strong> le nombre de répétitions (Ex: afficher les 10 premiers nombres).</p>
+                        </div>
+                        <div>
+                            <h2 class="text-orange-600 font-bold mb-1 border-b border-dotted border-gray-300 pb-1 flex items-center gap-1"><span class="rotate-45 block">✈</span> Structure POUR</h2>
+                            <div class="border rounded p-2 code-font text-[11px] leading-tight border-l-4 border-l-orange-500 mb-2">
+                                <p class="text-blue-800 font-bold">POUR <span class="text-red-500">compteur</span> DE <span class="text-green-600">début</span> A <span class="text-green-600">fin</span> [PAS p]</p>
+                                <p class="pl-4 text-gray-500 italic">Instructions</p>
+                                <p class="text-blue-800 font-bold">FIN POUR</p>
+                            </div>
+                        </div>
+                        <div>
+                            <h2 class="text-orange-600 font-bold mb-1 border-b border-dotted border-gray-300 pb-1 flex items-center gap-1"><span class="rotate-45 block">✈</span> Exemples</h2>
+                            <div class="border rounded p-2 code-font text-[11px] leading-tight border-l-4 border-l-orange-500 mb-2">
+                                <p class="text-gray-400 italic text-[10px]">{ Afficher de 1 à 5 }</p>
+                                <p class="text-blue-800 font-bold">POUR <span class="text-red-500">i</span> DE <span class="text-green-600">1</span> A <span class="text-green-600">5</span> FAIRE</p>
+                                <p class="pl-4 text-purple-700">Écrire<span class="text-gray-500">(i)</span></p>
+                                <p class="text-blue-800 font-bold">FIN POUR</p>
+                            </div>
+                            <div class="border rounded p-2 code-font text-[11px] leading-tight border-l-4 border-l-orange-500">
+                                <p class="text-gray-400 italic text-[10px]">{ Compte à rebours de 10 à 0 }</p>
+                                <p class="text-blue-800 font-bold">POUR <span class="text-red-500">i</span> DE <span class="text-green-600">10</span> A <span class="text-green-600">0</span> PAS <span class="text-green-600">-1</span> FAIRE</p>
+                                <p class="pl-4 text-purple-700">Écrire<span class="text-gray-500">(i)</span></p>
+                                <p class="text-blue-800 font-bold">FIN POUR</p>
+                            </div>
+                        </div>
+                    </div>
+                `,
+                points: [
+                    "Le compteur avance <strong>automatiquement</strong>.",
+                    "Le <strong>PAS</strong> est optionnel. S'il n'est pas précisé, il vaut 1 par défaut."
+                ] 
+            },
+            { 
+                id: "9/10", 
+                color: "border-indigo-500", 
+                title: "LA BOUCLE RÉPÉTER (DO...WHILE)", 
+                subtitle: "Au moins une fois 🔁", 
+                content: `
+                    <div class="space-y-4 text-[13px] text-gray-700 leading-snug">
+                        <div>
+                            <h2 class="text-indigo-600 font-bold mb-1 border-b border-dotted border-gray-300 pb-1 flex items-center gap-1"><span class="rotate-45 block">✈</span> Le Principe</h2>
+                            <p class="mb-1 text-sm">Contrairement à TANT QUE, la boucle RÉPÉTER exécutera <strong>toujours</strong> ses instructions au moins une fois, car la condition est vérifiée <strong>à la fin</strong>.</p>
+                        </div>
+                        <div>
+                            <h2 class="text-indigo-600 font-bold mb-1 border-b border-dotted border-gray-300 pb-1 flex items-center gap-1"><span class="rotate-45 block">✈</span> Structure</h2>
+                            <div class="border rounded p-2 code-font text-[11px] leading-tight border-l-4 border-l-indigo-500 mb-2">
+                                <p class="text-blue-800 font-bold">RÉPÉTER</p>
+                                <p class="pl-4 text-gray-500 italic">Instructions</p>
+                                <p class="text-blue-800 font-bold">JUSQU'À <span class="text-red-500">condition</span></p>
+                            </div>
+                        </div>
+                        <div>
+                            <h2 class="text-indigo-600 font-bold mb-1 border-b border-dotted border-gray-300 pb-1 flex items-center gap-1"><span class="rotate-45 block">✈</span> Exemple : Forcer un nombre positif</h2>
+                            <div class="border rounded p-2 code-font text-[11px] leading-tight border-l-4 border-l-indigo-500">
+                                <p class="text-blue-800 font-bold">RÉPÉTER</p>
+                                <p class="pl-4 text-purple-700">Écrire<span class="text-gray-500">("Saisissez un nombre > 0 :")</span></p>
+                                <p class="pl-4 text-purple-700">Lire<span class="text-gray-500">(n)</span></p>
+                                <p class="text-blue-800 font-bold">JUSQU'À <span class="text-red-500">n > 0</span></p>
+                            </div>
+                        </div>
+                        <div>
+                            <h2 class="text-indigo-600 font-bold mb-1 border-b border-dotted border-gray-300 pb-1 flex items-center gap-1"><span class="rotate-45 block">✈</span> Différence avec TANT QUE</h2>
+                            <ul class="text-[11px] space-y-1">
+                                <li><strong>TANT QUE :</strong> Condition au début. On risque de faire 0 tour.</li>
+                                <li><strong>RÉPÉTER :</strong> Condition à la fin. On fait toujours au moins 1 tour.</li>
+                            </ul>
+                        </div>
+                    </div>
+                `,
+                points: [
+                    "Attention : En C ou Java, c'est un 'Do... While (condition de continuation)', en Algo pur, c'est 'Jusqu'à (condition d'arrêt)'."
+                ] 
+            },
+            { 
+                id: "10", 
+                color: "border-emerald-600", 
+                title: "LES TABLEAUX", 
+                subtitle: "Stocker plusieurs valeurs 🏢", 
+                content: `
+                    <div class="space-y-4 text-[13px] text-gray-700 leading-snug">
+                        <div>
+                            <h2 class="text-emerald-700 font-bold mb-1 border-b border-dotted border-gray-300 pb-1 flex items-center gap-1"><span class="rotate-45 block">✈</span> C'est quoi un tableau ?</h2>
+                            <p class="mb-1 text-sm">Une structure qui permet de stocker <strong>plusieurs données de même type</strong> sous le <strong>même nom</strong>.</p>
+                            <div class="border rounded p-2 code-font text-[11px] leading-tight border-l-4 border-l-emerald-600 mb-2">
+                                <p class="text-blue-800 font-bold">VARIABLES</p>
+                                <p class="pl-4 text-red-500">notes : <span class="text-green-600 font-bold">Tableau[1..5] d'Entiers</span></p>
+                                <p class="pl-4 text-red-500 mt-1">notes[1] <span class="text-gray-500">← 15</span></p>
+                                <p class="pl-4 text-purple-700">Écrire<span class="text-gray-500">(notes[1])</span></p>
+                            </div>
+                        </div>
+                        <div>
+                            <h2 class="text-emerald-700 font-bold mb-1 border-b border-dotted border-gray-300 pb-1 flex items-center gap-1"><span class="rotate-45 block">✈</span> Parcourir un tableau</h2>
+                            <p class="mb-1 text-sm text-gray-500">L'alliance parfaite : Tableau + Boucle POUR !</p>
+                            <div class="border rounded p-2 code-font text-[11px] leading-tight border-l-4 border-l-emerald-600">
+                                <p class="text-blue-800 font-bold">POUR <span class="text-red-500">i</span> DE <span class="text-green-600">1</span> A <span class="text-green-600">5</span> FAIRE</p>
+                                <p class="pl-4 text-purple-700">Écrire<span class="text-gray-500">("La note N°", i, " est ", notes[i])</span></p>
+                                <p class="text-blue-800 font-bold">FIN POUR</p>
+                            </div>
+                        </div>
+                    </div>
+                `,
+                points: [
+                    "Les tableaux se parcourent presque toujours avec une boucle <strong>POUR</strong>.",
+                    "Un dépassement d'indice provoque une grande erreur d'exécution."
+                ] 
+            },
+            {
+                id: "11",
+                color: "border-slate-600",
+                title: "FONCTIONS & PROCÉDURES",
+                subtitle: "Coder mieux et réutilisable 🛠",
+                content: `
+                    <div class="space-y-4 text-[13px] text-gray-700 leading-snug">
+                        <div>
+                            <h2 class="text-slate-700 font-bold mb-1 border-b border-dotted border-gray-300 pb-1 flex items-center gap-1"><span class="rotate-45 block">✈</span> C'est quoi un sous-programme ?</h2>
+                            <p class="mb-1 text-sm">Au lieu d'écrire un gigantesque algorithme, on le découpe en petits morceaux plus simples à tester et réutiliser.</p>
+                        </div>
+                        <div>
+                            <h2 class="text-slate-700 font-bold mb-1 border-b border-dotted border-gray-300 pb-1 flex items-center gap-1"><span class="rotate-45 block">✈</span> Sous-programmes : Fonctions</h2>
+                            <p class="mb-1 text-sm">Un bloc de code qui calcule quelque chose et <strong>retourne une valeur</strong>.</p>
+                            <div class="border rounded p-2 code-font text-[11px] leading-tight border-l-4 border-l-slate-600">
+                                <p class="text-blue-800 font-bold">FONCTION <span class="text-black">Carré</span>(<span class="text-red-500">n: Entier</span>) : <span class="text-green-600 font-bold">Entier</span></p>
+                                <p class="text-blue-800 font-bold">DÉBUT</p>
+                                <p class="pl-4 text-blue-800 font-bold">RETOURNER <span class="text-gray-500 font-normal">n * n</span></p>
+                                <p class="text-blue-800 font-bold">FIN</p>
+                            </div>
+                        </div>
+                        <div>
+                            <h2 class="text-slate-700 font-bold mb-1 border-b border-dotted border-gray-300 pb-1 flex items-center gap-1"><span class="rotate-45 block">✈</span> Sous-programmes : Procédures</h2>
+                            <p class="mb-1 text-sm">Un bloc de code qui effectue une action mais <strong>ne retourne rien</strong>.</p>
+                            <div class="border rounded p-2 code-font text-[11px] leading-tight border-l-4 border-l-slate-600">
+                                <p class="text-blue-800 font-bold">PROCÉDURE <span class="text-black">DireBonjour</span>(<span class="text-red-500">nom: Chaîne</span>)</p>
+                                <p class="text-blue-800 font-bold">DÉBUT</p>
+                                <p class="pl-4 text-purple-700">Écrire<span class="text-gray-500">("Salut ", nom)</span></p>
+                                <p class="text-blue-800 font-bold">FIN</p>
+                            </div>
+                        </div>
+                    </div>
+                `,
+                points: [
+                    "<strong>Fonction</strong> : Calcule et retourne un résultat.",
+                    "<strong>Procédure</strong> : Exécute une action sans rien retourner (ex: affichage)."
+                ]
+            },
+            {
+                id: "12",
+                color: "border-fuchsia-600",
+                title: "LES MATRICES (2D)",
+                subtitle: "Des tableaux dans des tableaux 📊",
+                content: `
+                    <div class="space-y-4 text-[13px] text-gray-700 leading-snug">
+                        <div>
+                            <h2 class="text-fuchsia-700 font-bold mb-1 border-b border-dotted border-gray-300 pb-1 flex items-center gap-1"><span class="rotate-45 block">✈</span> Le Concept</h2>
+                            <p class="mb-1 text-sm">Une matrice est un tableau à deux dimensions. Imaginez une <strong>grille de bataille navale</strong> ou un <strong>échiquier</strong> avec des lignes et des colonnes.</p>
+                        </div>
+                        <div>
+                            <h2 class="text-fuchsia-700 font-bold mb-1 border-b border-dotted border-gray-300 pb-1 flex items-center gap-1"><span class="rotate-45 block">✈</span> Déclaration & Accès</h2>
+                            <div class="border rounded p-2 code-font text-[11px] leading-tight border-l-4 border-l-fuchsia-600">
+                                <p class="text-blue-800 font-bold">VARIABLES</p>
+                                <p class="pl-4 text-red-500">grille : <span class="text-green-600 font-bold">Tableau[1..3, 1..3] d'Entiers</span></p>
+                                <p class="text-gray-400 italic text-[10px] mt-1">{ Ligne 2, Colonne 3 }</p>
+                                <p class="pl-4 text-red-500">grille[2, 3] <span class="text-gray-500">← 9</span></p>
+                            </div>
+                        </div>
+                        <div>
+                            <h2 class="text-fuchsia-700 font-bold mb-1 border-b border-dotted border-gray-300 pb-1 flex items-center gap-1"><span class="rotate-45 block">✈</span> Parcourir une Matrice</h2>
+                            <p class="mb-1 text-sm text-gray-500">On utilise obligatoirement <strong>deux boucles POUR imbriquées</strong>.</p>
+                            <div class="border rounded p-2 code-font text-[11px] leading-tight border-l-4 border-l-fuchsia-600">
+                                <p class="text-blue-800 font-bold">POUR <span class="text-red-500">ligne</span> DE <span class="text-green-600">1</span> A <span class="text-green-600">3</span> FAIRE</p>
+                                <p class="pl-4 text-blue-800 font-bold">POUR <span class="text-red-500">col</span> DE <span class="text-green-600">1</span> A <span class="text-green-600">3</span> FAIRE</p>
+                                <p class="pl-8 text-purple-700">Écrire<span class="text-gray-500">("Valeur : ", grille[ligne, col])</span></p>
+                                <p class="pl-4 text-blue-800 font-bold">FIN POUR</p>
+                                <p class="text-blue-800 font-bold">FIN POUR</p>
+                            </div>
+                        </div>
+                    </div>
+                `,
+                points: [
+                    "Le premier indice est souvent la <strong>ligne (Y)</strong>, le second la <strong>colonne (X)</strong>.",
+                    "On peut étendre ce concept à 3D, 4D, etc., mais attention aux ressources !"
+                ]
+            },
+            {
+                id: "13",
+                color: "border-teal-600",
+                title: "LES STRUCTURES (ENREGISTREMENTS)",
+                subtitle: "Créer ses propres types 🧩",
+                content: `
+                    <div class="space-y-4 text-[13px] text-gray-700 leading-snug">
+                        <div>
+                            <h2 class="text-teal-700 font-bold mb-1 border-b border-dotted border-gray-300 pb-1 flex items-center gap-1"><span class="rotate-45 block">✈</span> Pourquoi inventer un type ?</h2>
+                            <p class="mb-1 text-sm">Un étudiant a un nom, un âge et une moyenne. Au lieu de faire 3 matrices, on peut regrouper le tout via un "Enregistrement" (ou Type Complexe).</p>
+                        </div>
+                        <div>
+                            <h2 class="text-teal-700 font-bold mb-1 border-b border-dotted border-gray-300 pb-1 flex items-center gap-1"><span class="rotate-45 block">✈</span> Définition</h2>
+                            <div class="border rounded p-2 code-font text-[11px] leading-tight border-l-4 border-l-teal-600 mb-2">
+                                <p class="text-blue-800 font-bold">TYPE <span class="text-black">Etudiant</span> = ENREGISTREMENT</p>
+                                <p class="pl-4 text-red-500">nom : <span class="text-green-600 font-bold">Chaîne</span></p>
+                                <p class="pl-4 text-red-500">age : <span class="text-green-600 font-bold">Entier</span></p>
+                                <p class="pl-4 text-red-500">moyenne : <span class="text-green-600 font-bold">Réel</span></p>
+                                <p class="text-blue-800 font-bold">FIN ENREGISTREMENT</p>
+                            </div>
+                        </div>
+                        <div>
+                            <h2 class="text-teal-700 font-bold mb-1 border-b border-dotted border-gray-300 pb-1 flex items-center gap-1"><span class="rotate-45 block">✈</span> Utilisation</h2>
+                            <p class="mb-1 text-sm text-gray-500">On accède aux données internes via un <strong>point (.)</strong>.</p>
+                            <div class="border rounded p-2 code-font text-[11px] leading-tight border-l-4 border-l-teal-600">
+                                <p class="text-blue-800 font-bold">VARIABLES</p>
+                                <p class="pl-4 text-red-500">etu1 : <span class="text-green-600 font-bold">Etudiant</span></p>
+                                <p class="text-blue-800 font-bold mt-1">DÉBUT</p>
+                                <p class="pl-4 text-red-500">etu1.nom <span class="text-gray-500">← "Bob"</span></p>
+                                <p class="pl-4 text-red-500">etu1.moyenne <span class="text-gray-500">← 10.5</span></p>
+                            </div>
+                        </div>
+                    </div>
+                `,
+                points: [
+                    "C'est l'ancêtre direct de la programmation <strong>Orientée Objet</strong> (Classes).",
+                    "Idéal pour organiser des variables qui décrivent logiquement une entité."
+                ]
+            },
+            {
+                id: "14",
+                color: "border-sky-600",
+                title: "ALGORITHMES CLASSIQUES",
+                subtitle: "Trier et Chercher 🔍",
+                content: `
+                    <div class="space-y-4 text-[13px] text-gray-700 leading-snug">
+                        <div>
+                            <h2 class="text-sky-700 font-bold mb-1 border-b border-dotted border-gray-300 pb-1 flex items-center gap-1"><span class="rotate-45 block">✈</span> Recherche Dichotomique</h2>
+                            <p class="mb-1 text-sm">Comment chercher un mot dans un dictionnaire ? On ouvre au milieu ! Sur un <strong>tableau trié</strong>, cet algorithme élimine 50% des données à chaque test.</p>
+                            <div class="border-t border-b border-gray-200 py-1 text-[11px] text-gray-600 bg-sky-50 px-2 rounded font-bold">
+                                Efficacité incroyable : Sur 1 000 000 de valeurs, 20 tests suffisent ! (Complexité O(log N))
+                            </div>
+                        </div>
+                        <div>
+                            <h2 class="text-sky-700 font-bold mb-1 border-b border-dotted border-gray-300 pb-1 flex items-center gap-1"><span class="rotate-45 block">✈</span> Le Tri à Bulles (Bubble Sort)</h2>
+                            <p class="mb-1 text-sm">Très connu, il remonte les grandes valeurs vers la fin de tableau, comme une bulle d'air dans l'eau.</p>
+                            <div class="border rounded p-2 code-font text-[11px] leading-tight border-l-4 border-l-sky-600">
+                                <p class="text-blue-800 font-bold">RÉPÉTER</p>
+                                <p class="pl-4 text-red-500">echange <span class="text-gray-500">← FAUX</span></p>
+                                <p class="pl-4 text-blue-800 font-bold">POUR <span class="text-red-500">i</span> DE <span class="text-green-600">1</span> A <span class="text-green-600">N-1</span> FAIRE</p>
+                                <p class="pl-8 text-blue-800 font-bold">SI <span class="text-red-500">tab[i] > tab[i+1]</span> ALORS</p>
+                                <p class="pl-12 text-gray-400 italic">{ échanger tab[i] et tab[i+1] }</p>
+                                <p class="pl-12 text-red-500">echange <span class="text-gray-500">← VRAI</span></p>
+                                <p class="pl-4 text-blue-800 font-bold">FIN POUR</p>
+                                <p class="text-blue-800 font-bold">JUSQU'À <span class="text-red-500">echange = FAUX</span></p>
+                            </div>
+                        </div>
+                    </div>
+                `,
+                points: [
+                    "Il existe des tris plus optimisés (Quicksort, Tri Fusion) mais beaucoup plus ardus !",
+                    "Avant d'utiliser une recherche dichotomique, vérifiez toujours que le tableau est trié."
+                ]
+            },
+            {
+                id: "15",
+                color: "border-rose-600",
+                title: "LA RÉCURSIVITÉ",
+                subtitle: "L'effet miroir infini 🪞",
+                content: `
+                    <div class="space-y-4 text-[13px] text-gray-700 leading-snug">
+                        <div>
+                            <h2 class="text-rose-700 font-bold mb-1 border-b border-dotted border-gray-300 pb-1 flex items-center gap-1"><span class="rotate-45 block">✈</span> Le Principe</h2>
+                            <p class="mb-1 text-sm">Une fonction récursive est une fonction qui <strong>S'APPELLE ELLE-MÊME</strong> en boucle jusqu'à ce qu'elle atteigne une fin claire.</p>
+                        </div>
+                        <div>
+                            <h2 class="text-rose-700 font-bold mb-1 border-b border-dotted border-gray-300 pb-1 flex items-center gap-1"><span class="rotate-45 block">✈</span> Exemple : Le calcul Factoriel (5!)</h2>
+                            <p class="mb-1 text-sm">On sait que 5! = 5 × 4! (Il appelle lui même son factoriel juste en-dessous).</p>
+                            <div class="border rounded p-2 code-font text-[11px] leading-tight border-l-4 border-l-rose-600">
+                                <p class="text-blue-800 font-bold">FONCTION <span class="text-black">Fact</span>(<span class="text-red-500">n: Entier</span>) : <span class="text-green-600 font-bold">Entier</span></p>
+                                <p class="text-blue-800 font-bold">DÉBUT</p>
+                                <p class="pl-4 text-blue-800 font-bold">SI <span class="text-red-500">n = 0</span> ALORS</p>
+                                <p class="pl-8 text-blue-800 font-bold">RETOURNER <span class="text-green-600">1</span></p>
+                                <p class="pl-4 text-blue-800 font-bold">SINON</p>
+                                <p class="pl-8 text-blue-800 font-bold">RETOURNER <span class="text-gray-500">n * <span class="font-bold underline text-black">Fact(n - 1)</span></span></p>
+                                <p class="pl-4 text-blue-800 font-bold">FIN SI</p>
+                                <p class="text-blue-800 font-bold">FIN</p>
+                            </div>
+                        </div>
+                        <div class="bg-red-50 text-rose-800 p-2 rounded text-[11px] border border-red-200 mt-2">
+                            <strong>ATTENTION :</strong> Une fonction récursive DOIT absolument avoir une <strong>condition d'arrêt</strong> (ici "quand n = 0"), sinon elle gèle l'ordinateur !
+                        </div>
+                    </div>
+                `,
+                points: [
+                    "Extrêmement utilisé en programmation avancée (arbres, dossiers de PC).",
+                    "Prend souvent plus de mémoire qu'une simple Boucle POUR."
+                ]
+            }
+        ];
+
+        const colors = [
+            { text: "text-gray-800", border: "border-gray-800", bg: "bg-gray-800" },
+            { text: "text-red-700", border: "border-red-600", bg: "bg-red-500" },
+            { text: "text-blue-800", border: "border-blue-800", bg: "bg-blue-500" },
+            { text: "text-green-700", border: "border-green-600", bg: "bg-green-600" },
+            { text: "text-purple-700", border: "border-purple-600", bg: "bg-purple-600" },
+            { text: "text-yellow-700", border: "border-yellow-600", bg: "bg-yellow-500" },
+            { text: "text-cyan-700", border: "border-cyan-600", bg: "bg-cyan-500" },
+            { text: "text-pink-700", border: "border-pink-600", bg: "bg-pink-500" },
+            { text: "text-orange-700", border: "border-orange-600", bg: "bg-orange-500" },
+            { text: "text-indigo-700", border: "border-indigo-600", bg: "bg-indigo-500" },
+            { text: "text-emerald-700", border: "border-emerald-600", bg: "bg-emerald-600" },
+            { text: "text-slate-700", border: "border-slate-600", bg: "bg-slate-500" },
+            { text: "text-fuchsia-700", border: "border-fuchsia-600", bg: "bg-fuchsia-600" },
+            { text: "text-teal-700", border: "border-teal-600", bg: "bg-teal-600" },
+            { text: "text-sky-700", border: "border-sky-600", bg: "bg-sky-500" },
+            { text: "text-rose-700", border: "border-rose-600", bg: "bg-rose-500" }
+        ];
+
+        function renderFiche() {
+            const data = pagesData[currentPage];
+            const container = document.getElementById('fiche');
+            
+            const pageColor = colors[currentPage] || colors[0];
+
+            container.innerHTML = `
+                <div class="relative pl-[65px] pt-12 pr-6 pb-6 h-full flex flex-col">
+                    <span class="absolute top-4 right-4 ${pageColor.bg} text-white text-[10px] px-2 py-1 rounded-full font-bold shadow-sm">${currentPage === 0 ? "Intro" : currentPage + "/" + (pagesData.length - 1)}</span>
+                    <div class="text-center mb-6">
+                        <h1 class="text-[17px] font-black ${pageColor.text} border-b-2 ${pageColor.border} inline-block pb-1 uppercase tracking-tight">${data.title}</h1>
+                        <p class="text-[11px] text-gray-500 mt-1 uppercase">${data.subtitle}</p>
+                    </div>
+                    
+                    <div class="flex-grow">
+                        ${data.content}
+                    </div>
+
+                    <section class="mt-8 border-t border-dotted border-gray-300 pt-2 pb-2">
+                        <h2 class="text-slate-800 font-bold text-[11px] uppercase flex items-center gap-1 italic mb-2">⚡ Points Clés :</h2>
+                        <ul class="text-[11px] space-y-1 text-slate-800">
+                            ${data.points.map(p => `<li class="flex gap-1.5"><span class="text-red-500 font-bold">•</span> <span>${p}</span></li>`).join('')}
+                        </ul>
+                    </section>
+                </div>
+            `;
+            const bottomPageText = currentPage === 0 ? "Page de Garde" : `Page ${currentPage} / ${pagesData.length - 1}`;
+            document.getElementById('pageCounter').innerText = bottomPageText;
+        }
+
+        function nextPage() { if (currentPage < pagesData.length - 1) { currentPage++; renderFiche(); } }
+        function prevPage() { if (currentPage > 0) { currentPage--; renderFiche(); } }
+
+        renderFiche();
+
+        function generateTruePDF() {
+            const btn = document.querySelector('button[onclick="generateTruePDF()"]');
+            const originalText = btn.innerHTML;
+            btn.innerHTML = `<svg class="w-4 h-4 animate-spin text-white" stroke="currentColor" fill="none" viewBox="0 0 24 24"><circle class="opacity-25" cx="12" cy="12" r="10" stroke-width="4"></circle><path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path></svg> Patientez...`;
+            btn.disabled = true;
+
+            const overlay = document.createElement("div");
+            overlay.style.position = "fixed";
+            overlay.style.inset = "0";
+            overlay.style.backgroundColor = "#1a1a1a";
+            overlay.style.zIndex = "9999";
+            overlay.style.display = "flex";
+            overlay.style.flexDirection = "column";
+            overlay.style.alignItems = "center";
+            overlay.style.justifyContent = "center";
+            overlay.innerHTML = `<div style="color: white; font-size: 20px; font-weight: bold; margin-bottom: 10px;">Préparation de votre PDF... ✨</div><div style="color: #9ca3af; font-size: 14px; text-align: center;">Les fiches sont en cours d'assemblage.<br>Ne fermez pas la page.</div>`;
+            document.body.appendChild(overlay);
+
+            Array.from(document.body.children).forEach(child => {
+                if (child.tagName !== 'SCRIPT' && child !== overlay) {
+                    child.setAttribute('data-visible', child.style.display || 'flex');
+                    child.style.display = 'none';
+                }
+            });
+
+            const printContainer = document.createElement('div');
+            printContainer.id = "print-container";
+            printContainer.style.width = "400px";
+            printContainer.style.margin = "0 auto";
+
+            pagesData.forEach((data, i) => {
+                const pageColor = colors[i] || colors[0];
+                const pageNumStr = i === 0 ? "Intro" : i + "/" + (pagesData.length - 1);
+                
+                const pageDiv = document.createElement('div');
+                pageDiv.className = "cahier-paper pdf-page";
+                pageDiv.style.position = "relative";
+                pageDiv.style.marginBottom = "0px";
+                
+                pageDiv.innerHTML = `
+                    <div class="hole" style="top: 80px;"></div>
+                    <div class="hole" style="top: 280px;"></div>
+                    <div class="hole" style="top: 480px;"></div>
+                    <div class="hole" style="top: 680px;"></div>
+                    
+                    <div class="relative pl-[65px] pt-12 pr-6 pb-6 h-full flex flex-col z-20">
+                        <span class="absolute top-4 right-4 ${pageColor.bg} text-white text-[10px] px-2 py-1 rounded-full font-bold shadow-sm">${pageNumStr}</span>
+                        <div class="text-center mb-6">
+                            <h1 class="text-[17px] font-black ${pageColor.text} border-b-2 ${pageColor.border} inline-block pb-1 uppercase tracking-tight">${data.title}</h1>
+                            ${data.subtitle ? `<p class="text-[11px] text-gray-500 mt-1 uppercase">${data.subtitle}</p>` : ''}
+                        </div>
+                        
+                        <div class="flex-grow">
+                            ${data.content}
+                        </div>
+
+                        ${data.points ? `
+                        <section class="mt-8 border-t border-dotted border-gray-300 pt-2 pb-2">
+                            <h2 class="text-slate-800 font-bold text-[11px] uppercase flex items-center gap-1 italic mb-2">⚡ Points Clés :</h2>
+                            <ul class="text-[11px] space-y-1 text-slate-800">
+                                ${data.points.map(p => `<li class="flex gap-1.5"><span class="text-red-500 font-bold">•</span> <span>${p}</span></li>`).join('')}
+                            </ul>
+                        </section>` : ''}
+                    </div>
+                `;
+                printContainer.appendChild(pageDiv);
+            });
+
+            document.body.appendChild(printContainer);
+
+            // Time for DOM to parse SVG and fonts inside the container
+            setTimeout(() => {
+                const opt = {
+                    margin:       0,
+                    filename:     'Algoritime-Cahier.pdf',
+                    image:        { type: 'jpeg', quality: 0.98 },
+                    html2canvas:  { scale: 2, useCORS: true, backgroundColor: '#1a1a1a' },
+                    jsPDF:        { unit: 'px', format: [400, 720], orientation: 'portrait' },
+                    pagebreak:    { mode: ['css', 'legacy'], elements: '.pdf-page' }
+                };
+
+                html2pdf().set(opt).from(printContainer).save().then(() => {
+                    document.body.removeChild(printContainer);
+                    document.body.removeChild(overlay);
+                    Array.from(document.body.children).forEach(child => {
+                        if (child.tagName !== 'SCRIPT' && child !== overlay && child.id !== "print-container") {
+                            child.style.display = child.getAttribute('data-visible') || ''; 
+                        }
+                    });
+                    btn.innerHTML = originalText;
+                    btn.disabled = false;
+                }).catch(err => {
+                    console.error("Erreur PDF: ", err);
+                    document.body.removeChild(printContainer);
+                    document.body.removeChild(overlay);
+                    Array.from(document.body.children).forEach(child => {
+                        if (child.tagName !== 'SCRIPT' && child !== overlay && child.id !== "print-container") {
+                            child.style.display = child.getAttribute('data-visible') || ''; 
+                        }
+                    });
+                    btn.innerHTML = originalText;
+                    btn.disabled = false;
+                });
+            }, 1000);
+        }
+    </script>
+</body>
+
+</html>
