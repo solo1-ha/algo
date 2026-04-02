@@ -1,0 +1,500 @@
+<!DOCTYPE html>
+<html lang="fr">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>MySQL - Fiches Interactives</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;800&family=Fira+Code&display=swap"
+        rel="stylesheet">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
+    <style>
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: #1a1a1a;
+            padding: 20px;
+            color: #333;
+        }
+
+        .code-font {
+            font-family: 'Fira Code', monospace;
+        }
+
+        .cahier-paper {
+            width: 400px;
+            min-height: 720px;
+            background-color: #fff;
+            position: relative;
+            box-shadow: 10px 10px 25px rgba(0, 0, 0, 0.3);
+            border-radius: 8px;
+            overflow: hidden;
+            background-image:
+                linear-gradient(45deg, rgba(0, 0, 0, 0.01) 25%, transparent 25%),
+                linear-gradient(-45deg, rgba(0, 0, 0, 0.01) 25%, transparent 25%),
+                linear-gradient(white, white 98%, #eaeaea 98%, #eaeaea);
+            background-size: 20px 20px, 20px 20px, 100% 25px;
+            background-position: 0 0, 0 10px, 0 -2px;
+        }
+
+        .cahier-paper::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 50px;
+            width: 1.5px;
+            height: 100%;
+            background-color: #fca5a5;
+            z-index: 10;
+        }
+
+        .hole {
+            position: absolute;
+            left: 12px;
+            width: 18px;
+            height: 18px;
+            background-color: #1a1a1a;
+            border-radius: 50%;
+            border: 2px solid #eaeaea;
+            z-index: 11;
+        }
+    </style>
+</head>
+
+<body class="flex flex-col items-center justify-center min-h-screen">
+
+    <div class="mb-6 flex gap-4 w-[400px] justify-between">
+        <button onclick="prevPage()"
+            class="bg-[#2d2d2d] text-white px-5 py-2 rounded-full font-bold shadow-md hover:bg-gray-700 transition flex items-center gap-2">
+            <span class="text-xl leading-none">←</span> Précédent
+        </button>
+
+        <span id="pageCounter" class="text-white font-bold self-center">Page 1 / 10</span>
+
+        <button onclick="nextPage()"
+            class="bg-indigo-600 text-white px-5 py-2 rounded-full font-bold shadow-md hover:bg-indigo-500 transition flex items-center gap-2">
+            Suivant <span class="text-xl leading-none">→</span>
+        </button>
+    </div>
+
+    <!-- Conteneur qui sera transformé en image par HTML2CANVAS ! -->
+    <div id="fiche-export-safe">
+        <div class="cahier-paper" id="fiche"></div>
+    </div>
+
+    <script>
+        let currentPage = 0;
+
+        const pagesData = [
+            { 
+                id: "Cover", 
+                color: "border-gray-800", 
+                title: "MYSQL", 
+                subtitle: "LE GUIDE COMPLET DES BASES DE DONNÉES 🐬", 
+                content: `
+                    <div class="space-y-6 text-[13px] text-gray-700 leading-snug flex flex-col items-center justify-center h-full text-center">
+                        <div class="mt-8">
+                            <p class="text-lg font-bold text-gray-800 mb-2">Bienvenue dans votre</p>
+                            <h2 class="text-[26px] font-black text-transparent bg-clip-text bg-gradient-to-r from-blue-500 to-cyan-600 mb-3 tracking-tighter leading-tight">CAHIER MYSQL</h2>
+                            <p class="mb-4 text-gray-600 px-4">Plongez dans l'univers du SQL et maîtrisez la gestions des bases de données relationnelles (SGBDR).</p>
+                        </div>
+                        <div class="border-t border-b border-dotted border-gray-300 py-4 px-2 w-full mt-4">
+                            <h3 class="text-sm font-bold text-gray-800 mb-3 uppercase">Au programme :</h3>
+                            <ul class="text-xs text-left grid grid-cols-2 gap-3 text-gray-600">
+                                <li><span class="text-blue-500 font-bold">✓</span> SGBD & Tables</li>
+                                <li><span class="text-green-500 font-bold">✓</span> CRUD complet</li>
+                                <li><span class="text-yellow-500 font-bold">✓</span> Tris & Filtres</li>
+                                <li><span class="text-purple-500 font-bold">✓</span> Fonctions (SUM, AVG)</li>
+                                <li class="col-span-2 text-center"><span class="text-red-500 font-bold">✓</span> Clés & Jointures (JOIN)</li>
+                            </ul>
+                        </div>
+                        <div class="mt-6">
+                            <button onclick="generateTruePDF()" class="bg-gray-800 text-white px-5 py-2.5 rounded-full font-bold shadow-md hover:bg-gray-700 transition flex items-center justify-center gap-2 mx-auto cursor-pointer">
+                                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 10v6m0 0l-3-3m3 3l3-3m2 8H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path></svg>
+                                Télécharger en PDF
+                            </button>
+                            <p class="text-[10px] text-gray-400 mt-2">Génère un PDF fidèle au format des fiches</p>
+                        </div>
+                    </div>
+                `,
+                points: [
+                    "<strong>SQL</strong> signifie Structured Query Language.",
+                    "MySQL est incontournable pour les développeurs Backend."
+                ] 
+            },
+            {
+                id: "1",
+                color: "border-blue-600",
+                title: "C'EST QUOI MYSQL ?",
+                subtitle: "Comprendre les SGBD 🗄️",
+                content: `
+                    <div class="space-y-4 text-[13px] text-gray-700 leading-snug">
+                        <div>
+                            <h2 class="text-blue-800 font-bold mb-1 border-b border-dotted border-gray-300 pb-1 flex items-center gap-1"><span class="rotate-45 block">✈</span> Le Concept</h2>
+                            <p class="mb-1 text-sm">MySQL est un système de gestion de bases de données relationnelles.</p>
+                        </div>
+                        <div>
+                            <h2 class="text-blue-800 font-bold mb-1 border-b border-dotted border-gray-300 pb-1 flex items-center gap-1"><span class="rotate-45 block">✈</span> L'Analogie d'un fichier Excel</h2>
+                            <ul class="list-disc pl-4 space-y-1 mt-1 text-[12px]">
+                                <li><strong>Base de données (DB) :</strong> Le fichier complet.</li>
+                                <li><strong>Table :</strong> Un onglet de votre fichier (ex: Clients).</li>
+                                <li><strong>Colonne (Field) :</strong> Un type de propriété (Nom, Age).</li>
+                                <li><strong>Ligne (Row) :</strong> Une donnée enregistrée (Bob).</li>
+                            </ul>
+                        </div>
+                    </div>
+                `,
+                points: ["Les données sont connectées entre elles, d'où le terme <strong>"relationnelles"</strong>."]
+            },
+            {
+                id: "2",
+                color: "border-green-600",
+                title: "CRÉER BD & TABLES",
+                subtitle: "Préparer l'infrastructure 🏗️",
+                content: `
+                    <div class="space-y-4 text-[13px] text-gray-700 leading-snug">
+                        <div>
+                            <h2 class="text-green-700 font-bold mb-1 border-b border-dotted border-gray-300 pb-1 flex items-center gap-1"><span class="rotate-45 block">✈</span> Démarrer le projet</h2>
+                            <div class="border rounded p-2 code-font text-[11px] leading-tight border-l-4 border-l-green-600 mb-2">
+                                <p class="text-blue-800 font-bold">CREATE DATABASE <span class="text-black">boutique;</span></p>
+                                <p class="text-blue-800 font-bold mt-1">USE <span class="text-black">boutique;</span></p>
+                            </div>
+                            <p class="text-[11px] italic text-gray-500">Le mot clé <strong>USE</strong> sélectionne la base sur laquelle on va bosser.</p>
+                        </div>
+                        <div>
+                            <h2 class="text-green-700 font-bold mb-1 border-b border-dotted border-gray-300 pb-1 flex items-center gap-1"><span class="rotate-45 block">✈</span> Créer une Table</h2>
+                            <div class="border rounded p-2 code-font text-[11px] leading-tight border-l-4 border-l-green-600">
+                                <p class="text-blue-800 font-bold">CREATE TABLE <span class="text-black">users (</span></p>
+                                <p class="pl-4 text-black">id <span class="text-purple-700 font-bold">INT</span> AUTO_INCREMENT PRIMARY KEY,</p>
+                                <p class="pl-4 text-black">nom <span class="text-purple-700 font-bold">VARCHAR(50)</span> NOT NULL,</p>
+                                <p class="pl-4 text-black">age <span class="text-purple-700 font-bold">INT</span></p>
+                                <p class="text-black">);</p>
+                            </div>
+                        </div>
+                    </div>
+                `,
+                points: ["<strong>INT</strong> (nombres entiers), <strong>VARCHAR(N)</strong> (texte court).", "<strong>NOT NULL</strong> signifie que le champ est obligatoire !"]
+            },
+            {
+                id: "3",
+                color: "border-purple-600",
+                title: "LE CRUD : INSERT",
+                subtitle: "Ajouter des données 📥",
+                content: `
+                    <div class="space-y-4 text-[13px] text-gray-700 leading-snug">
+                        <div>
+                            <h2 class="text-purple-700 font-bold mb-1 border-b border-dotted border-gray-300 pb-1 flex items-center gap-1"><span class="rotate-45 block">✈</span> INSERT INTO</h2>
+                            <p class="text-sm mb-2">Sert à jeter des données dans votre toute nouvelle table.</p>
+                            <div class="border rounded p-2 code-font text-[11px] leading-tight border-l-4 border-l-purple-600 mb-2">
+                                <p class="text-blue-800 font-bold">INSERT INTO <span class="text-black">users</span> (<span class="text-gray-500">nom, age</span>)</p>
+                                <p class="text-blue-800 font-bold">VALUES <span class="text-black">('Alice', 25);</span></p>
+                            </div>
+                        </div>
+                        <div>
+                            <h2 class="text-purple-700 font-bold mb-1 border-b border-dotted border-gray-300 pb-1 flex items-center gap-1"><span class="rotate-45 block">✈</span> Multiples Insertions</h2>
+                            <p class="text-[11px] italic text-gray-500 mb-1">Pour aller plus vite et moins lasser le serveur.</p>
+                            <div class="border rounded p-2 code-font text-[11px] leading-tight border-l-4 border-l-purple-600">
+                                <p class="text-blue-800 font-bold">INSERT INTO <span class="text-black">users</span> (nom, age)</p>
+                                <p class="text-blue-800 font-bold">VALUES</p>
+                                <p class="pl-4 text-black">('Bob', 30),</p>
+                                <p class="pl-4 text-black">('Charlie', 22),</p>
+                                <p class="pl-4 text-black">('David', 40);</p>
+                            </div>
+                        </div>
+                    </div>
+                `,
+                points: ["Le texte s'écrit toujours entre <strong>guillemets simples</strong> ('...').", "On omet l'ID car il se génère tout seul (AUTO_INCREMENT)."]
+            },
+            {
+                id: "4",
+                color: "border-teal-600",
+                title: "LE CRUD : SELECT",
+                subtitle: "Lire des données 👀",
+                content: `
+                    <div class="space-y-4 text-[13px] text-gray-700 leading-snug">
+                        <div>
+                            <h2 class="text-teal-700 font-bold mb-1 border-b border-dotted border-gray-300 pb-1 flex items-center gap-1"><span class="rotate-45 block">✈</span> L'instruction la plus utilisée</h2>
+                            <p class="mb-1 text-sm">Le <strong>SELECT</strong> permet d'afficher les informations enregistrées (Lecture).</p>
+                            <div class="border rounded p-2 code-font text-[11px] leading-tight border-l-4 border-l-teal-600 mb-2">
+                                <p class="text-gray-400 italic text-[10px]">{ Symbole * = Litéralement TOUTES les colonnes }</p>
+                                <p class="text-blue-800 font-bold mt-1">SELECT <span class="text-red-500">*</span> FROM <span class="text-black">users;</span></p>
+                            </div>
+                        </div>
+                        <div>
+                            <h2 class="text-teal-700 font-bold mb-1 border-b border-dotted border-gray-300 pb-1 flex items-center gap-1"><span class="rotate-45 block">✈</span> Cibler certaines colonnes</h2>
+                            <p class="text-[11px] italic text-gray-500 mb-1">Pour économiser la mémoire réseau, ne prenez que ce qu'il vous faut.</p>
+                            <div class="border rounded p-2 code-font text-[11px] leading-tight border-l-4 border-l-teal-600">
+                                <p class="text-blue-800 font-bold">SELECT <span class="text-black">nom, age</span> FROM <span class="text-black">users;</span></p>
+                            </div>
+                        </div>
+                    </div>
+                `,
+                points: ["La clause <strong>FROM</strong> est indissociable du SELECT. Elle cible la table."]
+            },
+            {
+                id: "5",
+                color: "border-rose-600",
+                title: "FILTRER (WHERE)",
+                subtitle: "Trouver les aiguilles 🧵",
+                content: `
+                    <div class="space-y-4 text-[13px] text-gray-700 leading-snug">
+                        <div>
+                            <h2 class="text-rose-700 font-bold mb-1 border-b border-dotted border-gray-300 pb-1 flex items-center gap-1"><span class="rotate-45 block">✈</span> Le filtre absolu</h2>
+                            <p class="mb-1 text-sm">Sert à ne remonter que les lignes qui valident les conditions.</p>
+                            <div class="border rounded p-2 code-font text-[11px] leading-tight border-l-4 border-l-rose-600 mb-2">
+                                <p class="text-blue-800 font-bold">SELECT <span class="text-black">*</span> FROM <span class="text-black">users</span></p>
+                                <p class="text-blue-800 font-bold">WHERE <span class="text-black">age > 18;</span></p>
+                            </div>
+                        </div>
+                        <div>
+                            <h2 class="text-rose-700 font-bold mb-1 border-b border-dotted border-gray-300 pb-1 flex items-center gap-1"><span class="rotate-45 block">✈</span> Opérateurs Logiques</h2>
+                            <div class="border rounded p-2 code-font text-[11px] leading-tight border-l-4 border-l-rose-600">
+                                <p class="text-blue-800 font-bold">SELECT <span class="text-black">*</span> FROM <span class="text-black">users</span></p>
+                                <p class="text-blue-800 font-bold">WHERE <span class="text-black">age > 18</span> AND <span class="text-black">nom = 'Bob';</span></p>
+                            </div>
+                            <p class="text-[11px] italic text-gray-500 mt-2">Autres outils : <strong>OR</strong>, <strong>IN(x, y)</strong>, ou <strong>!=</strong> (différent).</p>
+                        </div>
+                    </div>
+                `,
+                points: ["<strong>WHERE</strong> se place toujours après le <strong>FROM</strong>."]
+            },
+            {
+                id: "6",
+                color: "border-sky-600",
+                title: "TRIER & LIMITER",
+                subtitle: "Structurer ses rendus 📉",
+                content: `
+                    <div class="space-y-4 text-[13px] text-gray-700 leading-snug">
+                        <div>
+                            <h2 class="text-sky-700 font-bold mb-1 border-b border-dotted border-gray-300 pb-1 flex items-center gap-1"><span class="rotate-45 block">✈</span> ORDER BY</h2>
+                            <p class="mb-1 text-sm">Classer les données par ordre Croissant (ASC) ou Décroissant (DESC).</p>
+                            <div class="border rounded p-2 code-font text-[11px] leading-tight border-l-4 border-l-sky-600 mb-2">
+                                <p class="text-blue-800 font-bold">SELECT <span class="text-black">*</span> FROM <span class="text-black">users</span></p>
+                                <p class="text-blue-800 font-bold">ORDER BY <span class="text-black">age</span> DESC<span class="text-black">;</span></p>
+                            </div>
+                        </div>
+                        <div>
+                            <h2 class="text-sky-700 font-bold mb-1 border-b border-dotted border-gray-300 pb-1 flex items-center gap-1"><span class="rotate-45 block">✈</span> LIMIT</h2>
+                            <p class="mb-1 text-sm text-gray-500">Évite de charger 1000 résultats si on veut par ex. un <i>Top 3</i>.</p>
+                            <div class="border rounded p-2 code-font text-[11px] leading-tight border-l-4 border-l-sky-600">
+                                <p class="text-blue-800 font-bold">SELECT <span class="text-black">*</span> FROM <span class="text-black">users</span></p>
+                                <p class="text-blue-800 font-bold">ORDER BY <span class="text-black">age</span> DESC</p>
+                                <p class="text-blue-800 font-bold">LIMIT <span class="text-red-500">3</span><span class="text-black">;</span></p>
+                            </div>
+                        </div>
+                    </div>
+                `,
+                points: ["<strong>ORDER BY</strong> modifie seulement l'affichage final.", "Idéal pour faire des paginations (ex: LIMIT 10 OFFSET 20)."]
+            },
+            {
+                id: "7",
+                color: "border-fuchsia-600",
+                title: "UPDATE & DELETE",
+                subtitle: "Modifier et Supprimer 🧨",
+                content: `
+                    <div class="space-y-4 text-[13px] text-gray-700 leading-snug">
+                        <div>
+                            <h2 class="text-fuchsia-700 font-bold mb-1 border-b border-dotted border-gray-300 pb-1 flex items-center gap-1"><span class="rotate-45 block">✈</span> Écraser une valeur (UPDATE)</h2>
+                            <div class="border rounded p-2 code-font text-[11px] leading-tight border-l-4 border-l-fuchsia-600 mb-2">
+                                <p class="text-blue-800 font-bold">UPDATE <span class="text-black">users</span></p>
+                                <p class="text-blue-800 font-bold">SET <span class="text-black">age = 31</span></p>
+                                <p class="text-blue-800 font-bold">WHERE <span class="text-black">nom = 'Bob';</span></p>
+                            </div>
+                        </div>
+                        <div>
+                            <h2 class="text-fuchsia-700 font-bold mb-1 border-b border-dotted border-gray-300 pb-1 flex items-center gap-1"><span class="rotate-45 block">✈</span> Supprimer une valeur (DELETE)</h2>
+                            <div class="border rounded p-2 code-font text-[11px] leading-tight border-l-4 border-l-fuchsia-600">
+                                <p class="text-blue-800 font-bold">DELETE FROM <span class="text-black">users</span></p>
+                                <p class="text-blue-800 font-bold">WHERE <span class="text-black">id = 5;</span></p>
+                            </div>
+                        </div>
+                        <div class="bg-red-50 text-fuchsia-800 p-2 rounded text-[11px] border border-red-200 mt-2">
+                            <strong>DANGER :</strong> Toujours, TOUJOURS inclure le <strong>WHERE</strong> quand vous modifiez ou supprimez, sinon l'action s'applique à TOUTE LA TABLE en même temps !
+                        </div>
+                    </div>
+                `,
+                points: ["Le filtre utilisé est le même que dans le SELECT (<i>WHERE id = x</i>).", "Pour vider entièrement une table très vite : utiliser <strong>TRUNCATE</strong>."]
+            },
+            {
+                id: "8",
+                color: "border-indigo-600",
+                title: "CLÉS ET JOINTURES",
+                subtitle: "L'essence de la relation 🔗",
+                content: `
+                    <div class="space-y-4 text-[13px] text-gray-700 leading-snug">
+                        <div>
+                            <h2 class="text-indigo-700 font-bold mb-1 border-b border-dotted border-gray-300 pb-1 flex items-center gap-1"><span class="rotate-45 block">✈</span> Clés Étrangères (FK)</h2>
+                            <p class="mb-1 text-sm text-[12px]">Une table 'commandes' a une colonne 'user_id' faisant référence à l'ID de 'users'.</p>
+                        </div>
+                        <div>
+                            <h2 class="text-indigo-700 font-bold mb-1 border-b border-dotted border-gray-300 pb-1 flex items-center gap-1"><span class="rotate-45 block">✈</span> Relier deux tables (JOIN)</h2>
+                            <p class="text-[12px] text-gray-600 mb-1">On croise leur identifiant commun côte à côte en un seul bloc fusionné :</p>
+                            <div class="border rounded p-2 code-font text-[11px] leading-tight border-l-4 border-l-indigo-600 mb-2">
+                                <p class="text-blue-800 font-bold">SELECT <span class="text-black">users.nom, commandes.prix</span></p>
+                                <p class="text-blue-800 font-bold">FROM <span class="text-black">users</span></p>
+                                <p class="text-blue-800 font-bold">INNER JOIN <span class="text-black">commandes</span></p>
+                                <p class="pl-4 text-blue-800 font-bold">ON <span class="text-black">users.id = commandes.user_id;</span></p>
+                            </div>
+                        </div>
+                        <p class="text-[10px] text-gray-500 italic mt-2">La Jointure "INNER" ne garde que les entrées qui correspondent exactements aux deux tables en même temps.</p>
+                    </div>
+                `,
+                points: ["Les jointures remplacent le besoin d'inclure des requêtes multiples côte à côte.", "<strong>LEFT JOIN</strong> garantit de garder toutes les infos de la première table."]
+            }
+        ];
+
+        const colors = [
+            { text: "text-gray-800", border: "border-gray-800", bg: "bg-gray-800" },
+            { text: "text-blue-800", border: "border-blue-700", bg: "bg-blue-600" },
+            { text: "text-green-700", border: "border-green-600", bg: "bg-green-500" },
+            { text: "text-purple-700", border: "border-purple-600", bg: "bg-purple-500" },
+            { text: "text-teal-700", border: "border-teal-600", bg: "bg-teal-500" },
+            { text: "text-rose-700", border: "border-rose-600", bg: "bg-rose-500" },
+            { text: "text-sky-700", border: "border-sky-600", bg: "bg-sky-500" },
+            { text: "text-fuchsia-700", border: "border-fuchsia-600", bg: "bg-fuchsia-500" },
+            { text: "text-indigo-700", border: "border-indigo-600", bg: "bg-indigo-500" }
+        ];
+
+        function renderFiche() {
+            const data = pagesData[currentPage];
+            const container = document.getElementById('fiche');
+            
+            const pageColor = colors[currentPage] || colors[0];
+
+            container.innerHTML = `
+                <div class="relative pl-[65px] pt-12 pr-6 pb-6 h-full flex flex-col">
+                    <span class="absolute top-4 right-4 ${pageColor.bg} text-white text-[10px] px-2 py-1 rounded-full font-bold shadow-sm">${currentPage === 0 ? "Intro" : currentPage + "/" + (pagesData.length - 1)}</span>
+                    <div class="text-center mb-6">
+                        <h1 class="text-[17px] font-black ${pageColor.text} border-b-2 ${pageColor.border} inline-block pb-1 uppercase tracking-tight">${data.title}</h1>
+                        ${data.subtitle ? `<p class="text-[11px] text-gray-500 mt-1 uppercase">${data.subtitle}</p>` : ''}
+                    </div>
+                    
+                    <div class="flex-grow">
+                        ${data.content}
+                    </div>
+
+                    ${data.points ? `
+                    <section class="mt-8 border-t border-dotted border-gray-300 pt-2 pb-2">
+                        <h2 class="text-slate-800 font-bold text-[11px] uppercase flex items-center gap-1 italic mb-2">⚡ Points Clés :</h2>
+                        <ul class="text-[11px] space-y-1 text-slate-800">
+                            ${data.points.map(p => `<li class="flex gap-1.5"><span class="text-red-500 font-bold">•</span> <span>${p}</span></li>`).join('')}
+                        </ul>
+                    </section>` : ''}
+                </div>
+            `;
+            const bottomPageText = currentPage === 0 ? "Page de Garde" : `Page ${currentPage} / ${pagesData.length - 1}`;
+            document.getElementById('pageCounter').innerText = bottomPageText;
+        }
+
+        function nextPage() { if (currentPage < pagesData.length - 1) { currentPage++; renderFiche(); } }
+        function prevPage() { if (currentPage > 0) { currentPage--; renderFiche(); } }
+
+        renderFiche();
+
+        function generateTruePDF() {
+            const btn = document.querySelector('button[onclick="generateTruePDF()"]');
+            const originalText = btn.innerHTML;
+            btn.innerHTML = `<svg class="w-4 h-4 animate-spin text-white" stroke="currentColor" fill="none" viewBox="0 0 24 24"><circle class="opacity-25" cx="12" cy="12" r="10" stroke-width="4"></circle><path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path></svg> Patientez...`;
+            btn.disabled = true;
+
+            const overlay = document.createElement("div");
+            overlay.style.position = "fixed";
+            overlay.style.inset = "0";
+            overlay.style.backgroundColor = "#1a1a1a";
+            overlay.style.zIndex = "9999";
+            overlay.style.display = "flex";
+            overlay.style.flexDirection = "column";
+            overlay.style.alignItems = "center";
+            overlay.style.justifyContent = "center";
+            overlay.innerHTML = `<div style="color: white; font-size: 20px; font-weight: bold; margin-bottom: 10px;">Préparation de votre PDF... ✨</div><div style="color: #9ca3af; font-size: 14px; text-align: center;">Les fiches sont en cours d'assemblage.<br>Ne fermez pas la page.</div>`;
+            document.body.appendChild(overlay);
+
+            Array.from(document.body.children).forEach(child => {
+                if (child.tagName !== 'SCRIPT' && child !== overlay) {
+                    child.setAttribute('data-visible', child.style.display || 'flex');
+                    child.style.display = 'none';
+                }
+            });
+
+            const printContainer = document.createElement('div');
+            printContainer.id = "print-container";
+            printContainer.style.width = "400px";
+            printContainer.style.margin = "0 auto";
+
+            pagesData.forEach((data, i) => {
+                const pageColor = colors[i] || colors[0];
+                const pageNumStr = i === 0 ? "Intro" : i + "/" + (pagesData.length - 1);
+                
+                const pageDiv = document.createElement('div');
+                pageDiv.className = "cahier-paper pdf-page";
+                pageDiv.style.position = "relative";
+                pageDiv.style.marginBottom = "0px";
+                
+                pageDiv.innerHTML = `
+                    <div class="hole" style="top: 80px;"></div>
+                    <div class="hole" style="top: 280px;"></div>
+                    <div class="hole" style="top: 480px;"></div>
+                    <div class="hole" style="top: 680px;"></div>
+                    
+                    <div class="relative pl-[65px] pt-12 pr-6 pb-6 h-full flex flex-col z-20">
+                        <span class="absolute top-4 right-4 ${pageColor.bg} text-white text-[10px] px-2 py-1 rounded-full font-bold shadow-sm">${pageNumStr}</span>
+                        <div class="text-center mb-6">
+                            <h1 class="text-[17px] font-black ${pageColor.text} border-b-2 ${pageColor.border} inline-block pb-1 uppercase tracking-tight">${data.title}</h1>
+                            ${data.subtitle ? `<p class="text-[11px] text-gray-500 mt-1 uppercase">${data.subtitle}</p>` : ''}
+                        </div>
+                        
+                        <div class="flex-grow">
+                            ${data.content}
+                        </div>
+
+                        ${data.points ? `
+                        <section class="mt-8 border-t border-dotted border-gray-300 pt-2 pb-2">
+                            <h2 class="text-slate-800 font-bold text-[11px] uppercase flex items-center gap-1 italic mb-2">⚡ Points Clés :</h2>
+                            <ul class="text-[11px] space-y-1 text-slate-800">
+                                ${data.points.map(p => `<li class="flex gap-1.5"><span class="text-red-500 font-bold">•</span> <span>${p}</span></li>`).join('')}
+                            </ul>
+                        </section>` : ''}
+                    </div>
+                `;
+                printContainer.appendChild(pageDiv);
+            });
+
+            document.body.appendChild(printContainer);
+
+            setTimeout(() => {
+                const opt = {
+                    margin:       0,
+                    filename:     'MySQL-Le-Guide.pdf',
+                    image:        { type: 'jpeg', quality: 0.98 },
+                    html2canvas:  { scale: 2, useCORS: true, backgroundColor: '#1a1a1a' },
+                    jsPDF:        { unit: 'px', format: [400, 720], orientation: 'portrait' },
+                    pagebreak:    { mode: ['css', 'legacy'], elements: '.pdf-page' }
+                };
+
+                html2pdf().set(opt).from(printContainer).save().then(() => {
+                    document.body.removeChild(printContainer);
+                    document.body.removeChild(overlay);
+                    Array.from(document.body.children).forEach(child => {
+                        if (child.tagName !== 'SCRIPT' && child !== overlay && child.id !== "print-container") {
+                            child.style.display = child.getAttribute('data-visible') || ''; 
+                        }
+                    });
+                    btn.innerHTML = originalText;
+                    btn.disabled = false;
+                }).catch(err => {
+                    console.error("Erreur PDF: ", err);
+                    document.body.removeChild(printContainer);
+                    document.body.removeChild(overlay);
+                    Array.from(document.body.children).forEach(child => {
+                        if (child.tagName !== 'SCRIPT' && child !== overlay && child.id !== "print-container") {
+                            child.style.display = child.getAttribute('data-visible') || ''; 
+                        }
+                    });
+                    btn.innerHTML = originalText;
+                    btn.disabled = false;
+                });
+            }, 1000);
+        }
+    </script>
+</body>
+</html>
